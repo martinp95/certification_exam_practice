@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: certification_api
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app
+    ports:
+      - "${APP_PORT}:8080"
+    command: python /app/main.py
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    container_name: certification_db
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d # This is where the scripts are located
+    ports:
+      - "${DB_PORT}:5432"
+
+volumes:
+  postgres_data:
