@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 
 
-def get_certification():
+def find_all_certifications():
     db = next(get_db())
     try:
         return db.query(Certification).all()

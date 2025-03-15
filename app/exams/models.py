@@ -10,7 +10,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from database.connection import Base
-from auth.models import User
 
 
 # Enum for question types
@@ -77,7 +76,7 @@ class ExamAttempt(Base):
     score: Mapped[Annotated[int, mapped_column(Integer, nullable=False)]]
 
     # Relationship with User
-    user: Mapped["User"] = relationship("User", back_populates="exam_attempts")
+    user = relationship("User", back_populates="exam_attempts")
     # Relationship with Certification (if bidirectional, add back_populates="exam_attempts")
     certification: Mapped["Certification"] = relationship("Certification")
     # Relationship with ExamAttemptQuestion

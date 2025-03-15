@@ -70,9 +70,9 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 
 
-Cosas que tengo pendientes de hacer en el proyecto::
-- Cargar datos de preguntas y demas de la certificacion
-- Las pruebas del login y la parte de auth las tenemos.
+Cosas que tengo pendientes de hacer en el proyecto:
+- Volver a revisar la calidad del codigo de la parte de autenticacion y los ecamenes.
+- En principio ya esta todo funcionando, pero tneemos que meter mas funciones en la parte de examenes
 - Mejorar la parte de los examenes, todas las funciones tendran que estar autenticadas.
 - Incluir funciones nuevas que tengan sentido:
    - Listar certifiaciones.

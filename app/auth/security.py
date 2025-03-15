@@ -2,6 +2,8 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional
 from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status
 import jwt
 
 # Load environment variables with safe defaults
@@ -69,3 +71,43 @@ def create_access_token(data: Dict[str, Any]) -> str:
         raise ValueError(f"Token generation failed: {e}")
 
     return encoded_jwt
+
+# OAuth2 scheme for receiving the JWT token
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+
+def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
+    """
+    Dependency to get the current authenticated user from the JWT token.
+
+    Args:
+        token (str): The JWT token passed via the Authorization header.
+
+    Returns:
+        Dict[str, Any]: A dictionary representing the authenticated user details.
+
+    Raises:
+        HTTPException: If the token is invalid or expired.
+    """
+    if not SECRET_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Server misconfiguration: SECRET_KEY is not set."
+        )
+
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        # Decode JWT token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: Optional[str] = payload.get("sub")
+        if not username:
+            raise credentials_exception
+        return {"username": username}
+
+    except jwt.PyJWTError:
+        raise credentials_exception

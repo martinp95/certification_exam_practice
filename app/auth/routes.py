@@ -1,73 +1,12 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
-import jwt
 
 from auth.services import register_new_user, authenticate_user, deactivate_account
-from auth.security import SECRET_KEY, ALGORITHM  # JWT settings
-
-# OAuth2 scheme for receiving the JWT token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+from auth.schemas import UserCreate, UserLogin
+from auth.security import get_current_user
 
 router = APIRouter()
-
-
-class UserCreate(BaseModel):
-    """Request model for user registration."""
-    username: str
-    email: str
-    password: str
-
-
-class UserLogin(BaseModel):
-    """Request model for user login."""
-    username: str
-    password: str
-
-
-class TokenData(BaseModel):
-    """Model to hold data extracted from the JWT."""
-    username: Optional[str] = None
-
-
-def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
-    """
-    Dependency to get the current authenticated user from the JWT token.
-
-    Args:
-        token (str): The JWT token passed via the Authorization header.
-
-    Returns:
-        Dict[str, Any]: A dictionary representing the authenticated user details.
-
-    Raises:
-        HTTPException: If the token is invalid or expired.
-    """
-    if not SECRET_KEY:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Server misconfiguration: SECRET_KEY is not set."
-        )
-
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    try:
-        # Decode JWT token
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: Optional[str] = payload.get("sub")
-        if not username:
-            raise credentials_exception
-        return {"username": username}
-
-    except jwt.PyJWTError:
-        raise credentials_exception
-
 
 @router.post("/register", response_model=Dict[str, str], status_code=status.HTTP_201_CREATED)
 def register_user(user: UserCreate) -> Dict[str, str]:
