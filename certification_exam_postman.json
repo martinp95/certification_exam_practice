@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "a99cc995-6006-458d-b4b4-bb922d812ebc",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4106617"
+	},
+	"item": [
+		{
+			"name": "/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exam/certifications",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtcGVsYWV6IiwiZXhwIjoxNzQyMjUyNzIzfQ.SCBu-9pr1seEpLjoFb1W9EaR6oLVZZWceia65h99Yc0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/exam/certifications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exam",
+						"certifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exam/questions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtcGVsYWV6IiwiZXhwIjoxNzQyMjUyNzIzfQ.SCBu-9pr1seEpLjoFb1W9EaR6oLVZZWceia65h99Yc0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/exam/questions?certification_id=0a40caeb-6618-4c98-916e-2c84bfd09e16&number_of_questions=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exam",
+						"questions"
+					],
+					"query": [
+						{
+							"key": "certification_id",
+							"value": "0a40caeb-6618-4c98-916e-2c84bfd09e16"
+						},
+						{
+							"key": "number_of_questions",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exam/questions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtcGVsYWV6IiwiZXhwIjoxNzQyMjQ1ODQ3fQ.Xn8Tkb4Jje9NCFZWClOHMnVZlcarA1q0ghqUK34Yuv0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"certification_id\": \"645ab689-8a73-457c-9e9d-757d7b33ea1d\",\r\n  \"question_text\": \"Which AWS services are serverless?\",\r\n  \"question_type\": \"multiple_choice\",\r\n  \"answer_choices\": {\r\n    \"A\": \"AWS Lambda\",\r\n    \"B\": \"Amazon EC2\",\r\n    \"C\": \"AWS Fargate\",\r\n    \"D\": \"AWS Batch\"\r\n  },\r\n  \"correct_answer\": {\r\n    \"answers\": [\"A\", \"C\"]\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/exam/questions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exam",
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exam/certifications",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtcGVsYWV6IiwiZXhwIjoxNzQyMjQ1ODQ3fQ.Xn8Tkb4Jje9NCFZWClOHMnVZlcarA1q0ghqUK34Yuv0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"AWS IA Practitioner\",\r\n    \"description\": \"Examen de prueba\",\r\n    \"passing_score\":70\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/exam/certifications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exam",
+						"certifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"mpelaez\",\r\n  \"email\": \"martin.pelaez@correo.es\",\r\n  \"password\": \"12345\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"mpelaez\",\r\n  \"password\": \"12345\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/deactivate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtcGVsYWV6eiIsImV4cCI6MTc0MjIzODk1NX0.uOgNVX3ZZ_b9nfiWVPQsFmadgk3tHpEHOzew1K_OOWI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/deactivate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"deactivate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
