@@ -62,7 +62,8 @@ def create_access_token(data: Dict[str, Any]) -> str:
         ValueError: If encoding fails due to missing SECRET_KEY.
     """
     to_encode = data.copy()
-    expires = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expires = datetime.now(timezone.utc) + \
+        timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expires})
 
     try:
@@ -71,6 +72,7 @@ def create_access_token(data: Dict[str, Any]) -> str:
         raise ValueError(f"Token generation failed: {e}")
 
     return encoded_jwt
+
 
 # OAuth2 scheme for receiving the JWT token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

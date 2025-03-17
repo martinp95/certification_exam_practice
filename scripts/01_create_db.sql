@@ -10,9 +10,10 @@ CREATE TABLE users (
 );
 
 CREATE TABLE certifications (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR NOT NULL UNIQUE,
-    description TEXT
+    id UUID PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL,
+    description TEXT,
+    passing_score INTEGER NOT NULL DEFAULT 70
 );
 
 CREATE TABLE questions (
@@ -34,7 +35,8 @@ CREATE TABLE exam_attempts (
     exam_date TIMESTAMPTZ DEFAULT NOW(),
     score INTEGER NOT NULL CHECK (score >= 0),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (certification_id) REFERENCES certifications(id) ON DELETE CASCADE
+    FOREIGN KEY (certification_id) REFERENCES certifications(id) ON DELETE CASCADE,
+    passed BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE exam_attempt_questions (

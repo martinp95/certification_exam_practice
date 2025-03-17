@@ -1,12 +1,12 @@
-from sqlalchemy.orm import Session
+import uuid
+from typing import List
 from sqlalchemy.sql.expression import func
 from database.connection import get_db
-from exams.models import Certification, Question, ExamAttempt, ExamAttemptQuestion
-import uuid
-from datetime import datetime
+from exams.models import Certification, QuestionType, Question, ExamAttempt, ExamAttemptQuestion
 
 
-def find_all_certifications():
+def find_all_certifications() -> List[Certification]:
+    """Retrieve all certifications from the database."""
     db = next(get_db())
     try:
         return db.query(Certification).all()
@@ -14,7 +14,53 @@ def find_all_certifications():
         db.close()
 
 
-def get_questions(certification_id: uuid.UUID, number_of_questions: int):
+def create_certification(name: str, description: str, passing_score: int = 70) -> Certification:
+    """Create a new certification with a specified passing score."""
+    db = next(get_db())
+    try:
+        new_cert = Certification(
+            id=uuid.uuid4(),
+            name=name,
+            description=description,
+            passing_score=passing_score
+        )
+        db.add(new_cert)
+        db.commit()
+        db.refresh(new_cert)
+        return new_cert
+    finally:
+        db.close()
+
+
+def create_question(
+    certification_id: uuid.UUID,
+    question_text: str,
+    question_type: str,
+    answer_choices: dict,
+    correct_answer: dict
+) -> Question:
+    """Create a new question for a given certification."""
+    db = next(get_db())
+    try:
+        q_type = QuestionType(question_type)
+        new_q = Question(
+            id=uuid.uuid4(),
+            certification_id=certification_id,
+            question_text=question_text,
+            question_type=q_type,
+            answer_choices=answer_choices,
+            correct_answer=correct_answer
+        )
+        db.add(new_q)
+        db.commit()
+        db.refresh(new_q)
+        return new_q
+    finally:
+        db.close()
+
+
+def get_questions(certification_id: uuid.UUID, number_of_questions: int) -> List[Question]:
+    """Retrieve a random set of questions for a certification."""
     db = next(get_db())
     try:
         questions = (
@@ -25,42 +71,5 @@ def get_questions(certification_id: uuid.UUID, number_of_questions: int):
             .all()
         )
         return questions
-    finally:
-        db.close()
-
-
-def record_exam_attempt(
-        certification_id: uuid.UUID, user_id: uuid.UUID, answers: list):
-    db = next(get_db())
-    try:
-        score = 0
-        for answer in answers:
-            question = db.query(Question).filter(
-                Question.id == answer['question_id']).first()
-            if question and set(answer['user_answer']) == set(question.correct_answer):
-                score += 1
-
-        exam_attempt = ExamAttempt(
-            id=uuid.uuid4(),
-            user_id=user_id,
-            certification_id=certification_id,
-            num_questions=len(answers),
-            time_limit=30,
-            exam_date=datetime.now(),
-            score=score
-        )
-        db.add(exam_attempt)
-        db.commit()
-        for answer in answers:
-            exam_attempt_question = ExamAttemptQuestion(
-                id=uuid.uuid4(),
-                exam_attempt_id=exam_attempt.id,
-                question_id=answer['question_id'],
-                user_answer=answer['user_answer'],
-                is_correct=set(answer['user_answer']) == set(
-                    question.correct_answer)
-            )
-            db.add(exam_attempt_question)
-        db.commit()
     finally:
         db.close()

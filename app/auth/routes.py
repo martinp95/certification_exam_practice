@@ -1,15 +1,25 @@
-from typing import Dict, Any
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from auth.services import register_new_user, authenticate_user, deactivate_account
-from auth.schemas import UserCreate, UserLogin
+from auth.schemas import UserCreate, UserLogin, TokenResponse, MessageResponse
 from auth.security import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-@router.post("/register", response_model=Dict[str, str], status_code=status.HTTP_201_CREATED)
-def register_user(user: UserCreate) -> Dict[str, str]:
+
+@router.post(
+    "/register",
+    response_model=TokenResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register a new user",
+    responses={
+        201: {"description": "User registered successfully"},
+        400: {"description": "Username or email already registered"},
+    },
+)
+def register_user(user: UserCreate) -> TokenResponse:
     """
     Register a new user.
 
@@ -17,13 +27,22 @@ def register_user(user: UserCreate) -> Dict[str, str]:
         user (UserCreate): The user details required for registration.
 
     Returns:
-        Dict[str, str]: A dictionary with a success message and access token.
+        TokenResponse: A token response with access token and token type.
     """
-    return register_new_user(user.username, user.email, user.password)
+    result = register_new_user(user.username, user.email, user.password)
+    return TokenResponse(access_token=result["token"], token_type="bearer")
 
 
-@router.post("/login", response_model=Dict[str, str])
-def login_user(user: UserLogin) -> Dict[str, str]:
+@router.post(
+    "/login",
+    response_model=TokenResponse,
+    summary="Authenticate user and return JWT token",
+    responses={
+        200: {"description": "Authentication successful"},
+        401: {"description": "Invalid username or password"},
+    },
+)
+def login_user(user: UserLogin) -> TokenResponse:
     """
     Authenticate a user and return a JWT token.
 
@@ -31,7 +50,7 @@ def login_user(user: UserLogin) -> Dict[str, str]:
         user (UserLogin): The login credentials.
 
     Returns:
-        Dict[str, str]: A dictionary containing the access token and token type.
+        TokenResponse: A token response with access token and token type.
 
     Raises:
         HTTPException: If authentication fails.
@@ -45,21 +64,30 @@ def login_user(user: UserLogin) -> Dict[str, str]:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return {"access_token": result["token"], "token_type": "bearer"}
+    return TokenResponse(access_token=result["token"], token_type="bearer")
 
 
-@router.delete("/deactivate", response_model=Dict[str, str], status_code=status.HTTP_200_OK)
-def deactivate_user(current_user: Dict[str, Any] = Depends(get_current_user)) -> Dict[str, str]:
+@router.delete(
+    "/deactivate",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Deactivate the current user account",
+    responses={
+        200: {"description": "Account deactivated successfully"},
+        400: {"description": "Account deactivation failed"},
+    },
+)
+def deactivate_user(current_user: dict = Depends(get_current_user)) -> MessageResponse:
     """
     Deactivate the account of the currently authenticated user.
 
     This endpoint requires a valid JWT token.
 
     Args:
-        current_user (Dict[str, Any]): The authenticated user's details.
+        current_user (dict): The authenticated user's details.
 
     Returns:
-        Dict[str, str]: A dictionary indicating the outcome of the deactivation.
+        MessageResponse: Confirmation message.
 
     Raises:
         HTTPException: If deactivation fails.
@@ -70,4 +98,4 @@ def deactivate_user(current_user: Dict[str, Any] = Depends(get_current_user)) ->
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Account deactivation failed",
         )
-    return {"message": "Account deactivated successfully"}
+    return MessageResponse(message="Account deactivated successfully")
